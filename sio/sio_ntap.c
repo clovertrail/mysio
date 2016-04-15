@@ -161,6 +161,7 @@ int flockon = 1;
 FILE *out_fp;
 int directio_on = 0;
 int random_fill = 0;
+int zero_fill = 0;
 int main (int argc, char **argv)
 {
 	int i;
@@ -193,6 +194,9 @@ int main (int argc, char **argv)
 		}
 		if (strcmp ("-random_fill", argv[argc - 1]) == 0) {
 		    random_fill = 1;
+		}
+		if (strcmp ("-zero_fill", argv[argc - 1]) == 0) {
+		    zero_fill = 1;
 		}
 		argc--;
 	}
@@ -473,10 +477,15 @@ work_thread (void *arg)
 	SRAND ((threadnum + 1) * (int) getpid ());
 
 	if (random_fill) {
-	    for (i = 0; i < blk_sz; i++) {
-		buf[i] = RAND ();
+	    for (i = 0; i < malloc_size; i++) {
+		alloc_memory[i] = RAND ();
 	    }
 	    fprintf(stderr, "Fill the buffer with random content\n");
+	} else if (zero_fill) {
+	    for (i = 0; i < malloc_size; i++) {
+		alloc_memory[i] = 0;
+	    }
+	    fprintf(stderr, "Fill the buffer with zero content\n");
 	}
 	open_fds (fd, threadnum);
 
@@ -604,6 +613,7 @@ void print_usage()
 	printf("  -output -filename  :  send all output from the command to 'filename'\n");
 	printf("  -direct            :  disable file system caching - available in aix, solaris and linux\n");
 	printf("  -random_fill       :  fill the buffer with random content. Default it does not init the buffer\n");
+	printf("  -zero_fill         :  fill the buffer with zero content. Default it does not init the buffer\n");
 	printf("\n");
 	printf("Examples:\n");
 	printf("  Random 4K Reads to files a.file, b.file for 10 seconds with 2 threads.\n");
