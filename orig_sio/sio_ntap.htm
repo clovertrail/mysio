@@ -1,0 +1,173 @@
+<html>
+<head>
+<title>sio_ntap: Simulated I/O (sio) Manual Page</title>
+</head>
+
+<body>
+
+<h1>sio_ntap: Simulated I/O (sio) Manual Page - Network Appliance</h1>
+<h3>Overview</h3>
+<p>Manual page for the Simulated I/O tool (sio_ntap).&nbsp;</p>
+<ol>
+  <li><a href="#<tt>sio</tt>"><strong>What is sio_ntap?</strong></a></li>
+  <li><a href="#commandline"><strong>What are the command line options?</strong></a></li>
+  <li><a href="#simple"><strong>Example Inputs</strong></a></li>
+  <li><a href="#output"><strong>Sample Output</strong></a></li>
+  <li><a href="#dd"><b>sio_ntap compared to the Unix dd command</b></a></li>
+</ol>
+<p>
+<hr size="1">
+<h3><a name="<tt>sio</tt>">What is sio_ntap?</a></h3>
+<p><tt>sio</tt> (acronym for Simulated I/O) is a general purpose I/O load
+generator. It performs synchronous I/O's to the specified file(s).&nbsp;
+The main purpose is to generate various I/O loads while collecting some basic
+statistic. In general, <tt>sio</tt> allows the user to control:</p>
+<ul>
+  <li>Read / Write mix</li>
+  <li>Random or Sequential I/O patterns</li>
+  <li>Access in various block sizes</li>
+  <li>Access over a variable amount of file space (starting at offset 0)</li>
+  <li>Adjustable runtime (in seconds)</li>
+  <li>Single or multiple concurrent threads performing I/O</li>
+  <li>Access to one or more files or devices (e.g. raw devices)</li>
+</ul>
+<p>After completing the specified workload, <tt>sio</tt> generates several basic
+statistics:</p>
+<ul>
+  <li>I/O's Completed per second</li>
+  <li>KB/s Transferred</li>
+  <li>Total I/O's completed over the measured interval</li>
+</ul>
+<p><tt>sio</tt> is meant to enable I/O performance testing without having to create large
+application structures (such as databases). For example, <tt>sio</tt> can
+&quot;approximate&quot; a TPC-C like workload by specifying (for instance) a 2
+to 1 read/write ratio, of 4k transfer sizes, with the appropriate number of
+threads. While the emulation is not exact, the approximation provides
+valuable insight into I/O subsystem performance.</p>
+<p class="small"><a href="#top">Back to Top</a></p>
+<hr size="1">
+<h3><a name="commandline">What are the command line options?</a></h3>
+<p>The command line options are expressed here (obtained by running sio with no
+command line options):</p>
+
+  <p>Usage: <tt><b>sio Read% Rand% Blk_Size File_Size Seconds Thread Filename
+    [Filename]</b></tt></p>
+	
+<p>where</p>
+
+<ul>
+  <li><tt>Read %</tt>: Percentage of accesses that are reads (versus writes)</li>
+  <li><tt>Rand %</tt>: Percentage of accesses that are random (vs sequential)</li>
+  <li><tt>Blk_Size</tt>: Size of I/O requests that are issued</li>
+  <li><tt>FileSize</tt>: Size of area to be accessed in the file(s) (can be &lt;= to actual file size; same for all
+    files)</li>
+  <li><tt>Seconds</tt>: Run time (specified in
+    seconds), minimum of 10 seconds (60 or more recommended)</li>
+  <li><tt>Threads</tt>: Number of concurrent
+    threads issuing I/O's</li>
+  <li><tt>Filename(s)</tt>: One or more files to target for I/O</li>
+</ul>
+	
+<p>optional options</p>
+
+<ul>
+  <li>-noflock: Turn off filelocks.&nbsp; On some host, filelocks prevent host 
+  caching.</li>
+  <li>-output -outfile: Send all output to &quot;outfile&quot;</li>
+  <li>-direct: Disable filesystem caching - available on solaris, linux and aix.</li>
+</ul>
+<p class="small"><a href="#top">Back to Top</a></p>
+<hr size="1">
+<h3><a name="simple">Input Examples</a></h3>
+<ul>
+  <li>Example 1: 100% Random reads of 512 byte xfers to filename1, running for
+    60 seconds with 1 thread, accessing 1MB of the file<br><br>
+    <ul>
+      <li><tt>sio 100 100 512 1m 60 1 filename1</tt></li>
+    </ul>
+  </li>
+  <p>
+  <li>Example 2: Half reads, half writes of random 4K I/O's, filename1, 10
+    seconds, 2 threads, 20MB of file accessed<br><br>
+    <ul>
+      <li><tt>sio 50 100 4k 20m 10 2 filename1</tt></li>
+    </ul>
+  </li>
+  <p>
+  <li>Example 3: Sequential writes of 64K I/O's for 60 seconds against filename1
+    with 1 thread, 10MB of file accessed<br><br>
+    <ul>
+      <li><tt>sio 0 0 64k 10m 60 1 filename1</tt></li>
+    </ul>
+  </li>
+  <p>
+  <li>Example 4: 100% Random reads of 512 byte xfers to filename1, filename2,
+    filename3, running for 60 seconds with 32 threads, accessing 1GB of each of
+    the files<br><br>
+    <ul>
+      <li><tt>sio 100 100 512 1g 60 1 filename1 filename2</tt>
+        filename3</li>
+    </ul>
+  </li>
+</ul>
+<p class="small"><a href="#top">Back to Top</a></p>
+<hr size="1">
+<h3><a name="output">Sample Output</a></h3>
+<pre>server% <tt>sio</tt> 100 100 512 1m 10 1 testfile
+Version: 3.00
+
+SIO_NTAP:
+Inputs
+Read %:		100
+Random %:	100
+Block Size:	512
+File Size:	999936
+Secs:		10
+Threads:	1
+File(s):	testfile
+Outputs
+IOPS:		1995
+KB/s:		998
+IOs:		19974
+</pre>
+
+<p>The first block of output is simply a restatement of the command line
+inputs. Under the &quot;<tt>Outputs</tt>&quot; column, there are three result
+variables.&nbsp;&nbsp;</p>
+<ul>
+  <li><tt>IOPS (I/O's Per second)</tt>: indicates average I/O's per second over the
+    entire run.</li>
+  <li><tt>TPUT (Measured in KB/s)</tt>: indicates average KB/s transferred over the
+    entire run.</li>
+  <li><tt>IOS</tt>: Total I/O's completed over the length of the run.</li>
+</ul>
+<p>Beware when making comparisons among platforms or technologies. The
+most common issue is comparing I/O's that are cached on the I/O device with some
+other measurement of unCached I/O's.</p>
+<p class="small"><a href="#top">Back to Top</a></p>
+<hr size="1">
+<h3><a name="dd">sio compared to the Unix dd command</a></h3>
+<p>Many times, &quot;<tt>dd</tt>&quot; is the first &quot;performance test&quot; that is
+run against a new I/O subsystem. As a water test, this is fine. As a
+real measure of overall performance, <tt>dd</tt> and <tt>sio</tt> differ in a number of ways:</p>
+<ol>
+  <li>Single threaded. <tt>dd</tt> is a single threaded test. While this
+    provides some measure of throughput, it does not measure &quot;maximum&quot;
+    throughput, since a single threaded requestor is heavily affected by I/O
+    latency. <tt>sio</tt> allows both single thread and multiple thread workloads.</li>
+  <li><tt>dd</tt> has a fairly restricitve data movement paradigm: read from one file
+    write to another. <tt>sio</tt> allows simulation of a wide range of workloads,
+    including sequential and random I/O's, read and write workloads, etc.</li>
+  <li><tt>dd</tt>'s run time is dictated by the file size. To obtain really long
+    runs, <tt>dd</tt> needs either a large file or requires repetitive runs (making stats
+    collection difficult). <tt>sio</tt> can run any amount of time on any size
+    file. This simply makes testing sustained performance workloads
+    easier.</li>
+  <li><tt>dd</tt>'s stats are somewhat limited. <tt>sio</tt> provides the three most useful
+    stats in a concise form. Also, <tt>sio</tt> has the capability to collect more
+    extensive statistics in certain environments.</li>
+</ol>
+<p class="small"><a href="#top">Back to Top</a></p>
+<p class="small">Revised: July 01, 2004</p>
+</body>
+</html>

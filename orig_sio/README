@@ -1,0 +1,30 @@
+Network Appliance Inc.
+
+This directory contains the sio_ntap Simulated I/O tool
+developed by Network Appliance.  This directory contains
+the following files:
+
+README			(this file)
+Make_win32.bat		(makefile for windows.  assumes MS VC)
+Makefile		(unix makefile - e.g. make solaris or make linux)
+sio_unx.h		(header file for unix's)
+sio_win32.h		(header file for windows)
+sio_ntap.c		(sio_ntap code - contains unix and windows code)
+sio_ntap.htm		(web page describing sio_ntap and the parameters)
+
+sio_ntap_aix		(executable for AIX OS)
+sio_ntap_hpux_ia64	(executable for HP-UX Itanium)
+sio_ntap_hpux_parisc	(executable for HP-UX parisc)
+sio_ntap_linux		(executable for Linux OS)
+sio_ntap_sol		(executable for Solaris - 32bit)
+sio_ntap_sol64		(executable for Solaris - 64bit)
+sio_ntap_win32.exe	(executable for Windows)
+
+To build an executable, issue one of these commands:
+make aix
+make hpux_ia64
+make hpux_parisc
+make linux
+make solaris
+make solaris64
+Make_win32.bat
